@@ -98,7 +98,7 @@ function sortPoints(points){
     if(p1.x == p2.x){
       return p1.y-p2.y
     }else{
-      return p1.x == p2.x
+      return p1.x - p2.x
     }
   })
 
