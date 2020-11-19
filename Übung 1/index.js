@@ -48,6 +48,19 @@ function main(objString) {
     stepCount++;
   },800)
   
+  console.log("CW")
+  console.log("--------------------")
+  for(let i = 0; i < steps[steps.length-1].red.length - 1; i++){
+    let entry = steps[steps.length-1].red[i]
+    console.log("X: " + entry.x, "Y: " + entry.y)
+  }
+
+  console.log("CCW")
+  console.log("--------------------")
+  for(let i = steps[steps.length-1].red.length - 1; i > 0; i--){
+    let entry = steps[steps.length-1].red[i]
+    console.log("X: " + entry.x, "Y: " + entry.y)
+  }
 }
 
 
