@@ -31,7 +31,8 @@ function readFile(objString){
 }
 
 function setup() {
-    createCanvas(500, 500);
+    const canvas = createCanvas(500, 500);
+    //canvas.parent(document.body);
 }
 
 function main(points){
@@ -40,5 +41,5 @@ function main(points){
     let quadTree = new QuadTree(new Node(points, null, 0, 0, 500, 500))
     quadTree.nodes.splitPointsinNode()
 
-    quadTree.draw()
+    quadTree.draw(quadTree.nodes)
 }
