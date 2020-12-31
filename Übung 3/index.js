@@ -42,4 +42,6 @@ function main(points){
     quadTree.nodes.splitPointsinNode()
 
     quadTree.draw(quadTree.nodes)
+
+    
 }

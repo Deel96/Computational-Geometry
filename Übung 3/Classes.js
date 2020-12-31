@@ -22,6 +22,7 @@ class VisEdge{
 
 class Node {
     constructor(points, parentNode, x, y, width, height){
+        this.id=null;
         this.x = x
         this.y = y
         this.width = width
@@ -98,14 +99,16 @@ class Node {
     }
 }
 class QuadTree {
+    
     constructor(nodes){
         this.nodes = nodes
+        this.network=null;
     }
 
     fillNodesAndEdges(rootNode){
       
 
-        let id =1;
+        let id =0;
         const nodeData = [];
         const edgeData = [];
 
@@ -123,39 +126,52 @@ class QuadTree {
 
     addChildren(quadNode,nodes,parentId,edges){
         let childId =1;
-        //nodes.push(1,2,3,4);
+
         let createChild= function(id){
             return new VisNode(id,"");
         }
 
         const childNE = createChild(parentId.toString()+(childId++).toString())
         const edgeNE = new VisEdge(parentId.toString()+(childId), childNE.id.toString(),parentId.toString())
-        if(quadNode.ne != null  && quadNode.ne.points?.length>1){
-        this.addChildren(quadNode.ne,nodes,childNE.id,edges);
+        if(quadNode.ne != null ){  
+            quadNode.ne.id = childNE.id;
+            if(quadNode.ne.points?.length>1){      
+            this.addChildren(quadNode.ne,nodes,childNE.id,edges);
+            }
         }
+        quadNode.id = parentId.toString();
         const childNW = createChild(parentId.toString()+(childId++).toString())
         const edgeNW = new VisEdge(parentId.toString()+(childId), childNW.id.toString(),parentId.toString())
-        if(quadNode.nw != null && quadNode.nw.points?.length>1){
-        this.addChildren(quadNode.nw,nodes,childNW.id,edges);
-     
+        if(quadNode.nw != null ){  
+            quadNode.nw.id = childNW.id;
+            if(quadNode.nw.points?.length>1){      
+            this.addChildren(quadNode.nw,nodes,childNW.id,edges);
+            }
         }
+
         const childSW = createChild(parentId.toString()+(childId++).toString())
         const edgeSW = new VisEdge(parentId.toString()+(childId), childSW.id.toString(),parentId.toString())
-        if(quadNode.sw != null  && quadNode.sw.points?.length>1){
-        this.addChildren(quadNode.sw,nodes,childSW.id,edges);
-        
+
+        if(quadNode.sw != null ){  
+            quadNode.sw.id = childSW.id;
+            if(quadNode.sw.points?.length>1){      
+            this.addChildren(quadNode.sw,nodes,childSW.id,edges);
+            }
         }
 
         const childSE = createChild(parentId.toString()+(childId++).toString())
         const edgeSE = new VisEdge(parentId.toString()+(childId), childSE.id.toString(),parentId.toString())
-        if(quadNode.se != null  && quadNode.se.points?.length>1){
-        this.addChildren(quadNode.se,nodes,childSE.id,edges);
-        
+        if(quadNode.se != null ){  
+            quadNode.se.id = childSE.id;
+            if(quadNode.se.points?.length>1){      
+            this.addChildren(quadNode.se,nodes,childSE.id,edges);
+            }
         }
 
+        quadNode.id = parentId.toString();
         nodes.push(childNE,childNW,childSW,childSE);
         edges.push(edgeNE,edgeNW,edgeSW,edgeSE);
-    
+       
     }
 
     draw(quadNodes){
@@ -178,12 +194,47 @@ class QuadTree {
                 
             },
         };
-        var network = new vis.Network(container, data, options);
+        let network = new vis.Network(container, data, options);
 
-        network.on( 'click', function(properties) {
+         network.on( 'click', (properties)=> {
             var ids = properties.nodes;
             var clickedNodes = treeNodes.get(ids);
             console.log('clicked nodes:', clickedNodes[0]?.id);
+            this.findNode(clickedNodes[0]?.id)
         });
+    }
+
+
+    findNode(id){ //12
+        let index =0;
+
+        id.charAt(index); //1
+        let foundNode = this.nodes;
+        while(index < id.length){
+            let currentId =id.charAt(index);
+            
+
+            if (currentId =="1"){ //NE
+            foundNode = foundNode.ne;
+            }
+            
+            else if (currentId =="2"){ //NW
+                foundNode = foundNode.nw;
+            }
+
+            else if (currentId =="3"){ //SW
+                foundNode = foundNode.sw;
+            }
+
+            else if (currentId =="4"){ //SE
+                foundNode = foundNode.se;
+            }
+            index++;
+        }
+        console.log(foundNode);
+    }
+
+    searchNode(){
+
     }
 }
