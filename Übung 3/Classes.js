@@ -132,14 +132,12 @@ class QuadTree {
         const edgeNE = new VisEdge(parentId.toString()+(childId), childNE.id.toString(),parentId.toString())
         if(quadNode.ne != null  && quadNode.ne.points?.length>1){
         this.addChildren(quadNode.ne,nodes,childNE.id,edges);
-
+        }
         const childNW = createChild(parentId.toString()+(childId++).toString())
         const edgeNW = new VisEdge(parentId.toString()+(childId), childNW.id.toString(),parentId.toString())
         if(quadNode.nw != null && quadNode.nw.points?.length>1){
         this.addChildren(quadNode.nw,nodes,childNW.id,edges);
      
-        }
-           
         }
         const childSW = createChild(parentId.toString()+(childId++).toString())
         const edgeSW = new VisEdge(parentId.toString()+(childId), childSW.id.toString(),parentId.toString())
