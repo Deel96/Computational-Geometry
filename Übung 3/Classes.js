@@ -40,36 +40,25 @@ class Node {
         let nodeWidthMid = this.width / 2
         let nodeHeightMid = this.height / 2
 
+        this.ne = new Node([], this, this.x + nodeWidthMid, this.y + nodeHeightMid, nodeWidthMid, nodeHeightMid)
+        this.nw = new Node([], this, this.x, this.y +nodeHeightMid, nodeWidthMid, nodeHeightMid)
+        this.sw = new Node([], this, this.x, this.y, nodeWidthMid, nodeHeightMid)
+        this.se = new Node([], this, this.x + nodeWidthMid, this.y, nodeWidthMid, nodeHeightMid)
+
         if(this.points.length > 1){
             for(let p of this.points){
                 // Check if Point is in NorthEastern Node
                 if(p.x > this.x + nodeWidthMid && p.y > this.y + nodeHeightMid){
-                    if(this.ne.points == null){
-                        this.ne = new Node([p], this, this.x + nodeWidthMid, this.y + nodeHeightMid, nodeWidthMid, nodeHeightMid)
-                    }else{
-                        this.ne.points.push(p)
-                    }
+                    this.ne.points.push(p)
                 // Check if Point is in NorthWestern Node
                 }else if(p.x <= this.x + nodeWidthMid && p.y > this.y + nodeHeightMid){
-                    if(this.nw.points == null){
-                        this.nw = new Node([p], this, this.x, nodeHeightMid, nodeWidthMid, nodeHeightMid)
-                    }else{
-                        this.nw.points.push(p)
-                    }
+                    this.nw.points.push(p)
                 // Check if Point is in SouthWestern Node
                 }else if(p.x <= this.x + nodeWidthMid && p.y <= this.y + nodeHeightMid){
-                    if(this.sw.points == null){
-                        this.sw = new Node([p], this, this.x, this.y, nodeWidthMid, nodeHeightMid)
-                    }else{
-                        this.sw.points.push(p)
-                    }
+                    this.sw.points.push(p)
                 // Check if Point is in SouthEastern Node
                 }else if(p.x > this.x + nodeWidthMid && p.y <= this.y + nodeHeightMid){
-                    if(this.se.points == null){
-                        this.se = new Node([p], this, nodeWidthMid, this.y, nodeWidthMid, nodeHeightMid)
-                    }else{
-                        this.se.points.push(p)
-                    }
+                    this.se.points.push(p)
                 }
             }
             this.drawSeperation(this)
@@ -192,6 +181,7 @@ class QuadTree {
                     }
                 
             },
+            physics:false
         };
         let network = new vis.Network(container, data, options);
 
@@ -231,9 +221,17 @@ class QuadTree {
             index++;
         }
         console.log(foundNode);
+        this.drawSquare(foundNode)
     }
 
-    searchNode(){
-
+    drawSquare(node){
+        clear();
+        let c = color(255, 204, 0);
+        fill(c);
+        noStroke();
+        rect(node.x,-node.y+500,node.width,-node.height)
+        this.nodes.drawPoints();
+        this.nodes.splitPointsinNode()
+        
     }
 }
