@@ -29,10 +29,10 @@ class Node {
         this.height = height
         this.points = points
         this.parentNode = parentNode
-        this.ne = {}
-        this.nw = {}
-        this.se = {}
-        this.sw = {}
+        this.ne = null
+        this.nw = null
+        this.se = null
+        this.sw = null
 
         this.drawPoints()
     }
@@ -69,6 +69,18 @@ class Node {
             //this.points = null
         }
     }
+    redrawSplit(node){  
+        if(node.points.length > 1){
+            this.drawLine(node.x, node.y + node.height/2, node.x + node.width, node.y + node.height/2,"black")
+            this.drawLine(node.x + node.width/2, node.y, node.x + node.width/2, node.y + node.height,"black")
+
+            if(node.ne?.redrawSplit) node.ne?.redrawSplit(node.ne);
+            if(node.nw?.redrawSplit) node.nw?.redrawSplit(node.nw);
+            if(node.sw?.redrawSplit) node.sw?.redrawSplit(node.sw);
+            if(node.se?.redrawSplit) node.se?.redrawSplit(node.se);
+        }
+    }
+
     drawPoints(){
         stroke("black");
         strokeWeight(5);
@@ -91,6 +103,7 @@ class QuadTree {
     constructor(nodes){
         this.nodes = nodes
         this.network=null;
+        this.currentNode =null;
     }
 
     fillNodesAndEdges(rootNode){
@@ -188,8 +201,11 @@ class QuadTree {
          network.on( 'click', (properties)=> {
             var ids = properties.nodes;
             var clickedNodes = treeNodes.get(ids);
-            console.log('clicked nodes:', clickedNodes[0]?.id);
-            this.findNode(clickedNodes[0]?.id)
+            
+            if(clickedNodes.length>0){
+                console.log('clicked nodes:', clickedNodes[0]?.id);
+                this.findNode(clickedNodes[0]?.id)
+            }
         });
     }
 
@@ -221,17 +237,28 @@ class QuadTree {
             index++;
         }
         console.log(foundNode);
+        this.currentNode = foundNode;
         this.drawSquare(foundNode)
     }
 
     drawSquare(node){
         clear();
-        let c = color(255, 204, 0);
+        let c = color(138,43,226);
         fill(c);
         noStroke();
         rect(node.x,-node.y+500,node.width,-node.height)
-        this.nodes.drawPoints();
-        this.nodes.splitPointsinNode()
+       
+        //this.nodes.splitPointsinNode()
+     
+        const neighbour =getNeighbour(select.value,this);
+    if(neighbour){
+        let c2 = color(0,255,0);
+        fill(c2);
+        noStroke();
+        rect(neighbour.x,-neighbour.y+500,neighbour.width,-neighbour.height)
+    }
+    this.nodes.drawPoints();
+    this.nodes.redrawSplit(this.nodes);
         
     }
 }
