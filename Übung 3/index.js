@@ -47,19 +47,12 @@ function main(points){
 
     quadTree.draw(quadTree.nodes)
 
-    select.addEventListener("change",(event)=>{
-        // let node =getNeighbour(event.target.value,quadTree)
-
-        // let c = color(0,255,0);
-        // fill(c);
-        // noStroke();
-        // rect(node.x,-node.y+500,node.width,-node.height)
-
-        quadTree.drawSquare(quadTree.currentNode);
-    })
     
 }
 
+function drawNeighbourInTree(id){
+    
+}
 
 function getNeighbour(neighbour,quadTree){
     if(neighbour =="North")

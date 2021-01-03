@@ -104,6 +104,8 @@ class QuadTree {
         this.nodes = nodes
         this.network=null;
         this.currentNode =null;
+        this.currentNeighbour=null;
+        this.treeNodes=null;
     }
 
     fillNodesAndEdges(rootNode){
@@ -178,7 +180,7 @@ class QuadTree {
     draw(quadNodes){
         var a =1;
         const {treeNodes, treeEdges} = this.fillNodesAndEdges(quadNodes);
-    
+        this.treeNodes = treeNodes;
         // create a network
         var container = document.getElementById("mynetwork");
         var data = {
@@ -197,18 +199,119 @@ class QuadTree {
             physics:false
         };
         let network = new vis.Network(container, data, options);
-
+        
          network.on( 'click', (properties)=> {
-            var ids = properties.nodes;
-            var clickedNodes = treeNodes.get(ids);
-            
-            if(clickedNodes.length>0){
+            var id = properties.nodes[0];
+            if(properties.nodes[0]){
+            var clickedNodes = treeNodes.get(id);
+
+            if(clickedNodes){
                 console.log('clicked nodes:', clickedNodes[0]?.id);
-                this.findNode(clickedNodes[0]?.id)
+                
+
+                clickedNodes.color = {
+                border: '#2B7CE9',
+                background: '#D2E5FF',
+                highlight: {
+                    border: '#8a2be2',
+                    background: '#8a2be2'
+                }
+                }
+            treeNodes.update(clickedNodes);
+            }
+
+
+
+            //reset old neighbour
+            if(this.currentNeighbour){
+            var neighbourNode = treeNodes.get(this.currentNeighbour.id);
+
+            neighbourNode.color = {
+                border: '#2B7CE9',
+                background: '#D2E5FF',
+                highlight: {
+                    border: '#8a2be2',
+                    background: '#8a2be2'
+                }
+                }
+                treeNodes.update(neighbourNode);
+            }
+
+
+            this.findNode(clickedNodes.id);
+
+            
+            if(this.currentNeighbour){
+                var neighbourNode = treeNodes.get(this.currentNeighbour.id);
+    
+                neighbourNode.color = {
+                    border: '#00ff00',
+                    background: '#00ff00',
+                    highlight: {
+                        border: '#8a2be2',
+                        background: '#8a2be2'
+                    }
+                    }
+                    treeNodes.update(neighbourNode);
+                }
+
+
+
+
+
+
+
             }
         });
-    }
 
+
+        select.addEventListener("change",(event)=>{
+            
+            //reset old neighbour
+            if(this.currentNeighbour){
+                var neighbourNode = this.treeNodes.get(this.currentNeighbour.id);
+    
+                neighbourNode.color = {
+                    border: '#2B7CE9',
+                    background: '#D2E5FF',
+                    highlight: {
+                        border: '#8a2be2',
+                        background: '#8a2be2'
+                    }
+                    }
+                    this.treeNodes.update(neighbourNode);
+                }
+    
+    
+                // this.findNode(clickedNodes.id);
+                this.currentNeighbour=getNeighbour(select.value,this);
+                
+                if(this.currentNeighbour){
+                    var neighbourNode = this.treeNodes.get(this.currentNeighbour.id);
+        
+                    neighbourNode.color = {
+                        border: '#00ff00',
+                        background: '#00ff00',
+                        highlight: {
+                            border: '#8a2be2',
+                            background: '#8a2be2'
+                        }
+                        }
+                        treeNodes.update(neighbourNode);
+                    }
+    
+            
+            
+            
+            this.currentNeighbour=getNeighbour(select.value,this);
+            this.drawSquare(this.currentNode);
+
+            
+        })
+    
+    }
+    
+         
 
     findNode(id){ //12
         let index =0;
@@ -247,18 +350,82 @@ class QuadTree {
         fill(c);
         noStroke();
         rect(node.x,-node.y+500,node.width,-node.height)
-       
-        //this.nodes.splitPointsinNode()
+    
      
-        const neighbour =getNeighbour(select.value,this);
-    if(neighbour){
+        this.currentNeighbour=getNeighbour(select.value,this);
+    if(this.currentNeighbour){
         let c2 = color(0,255,0);
         fill(c2);
         noStroke();
-        rect(neighbour.x,-neighbour.y+500,neighbour.width,-neighbour.height)
+        rect(this.currentNeighbour.x,-this.currentNeighbour.y+500,this.currentNeighbour.width,-this.currentNeighbour.height)
     }
     this.nodes.drawPoints();
     this.nodes.redrawSplit(this.nodes);
         
     }
+
+    colorTreeNodes(nodes){
+        var id = properties.nodes[0];
+            if(properties.nodes[0]){
+            var clickedNodes = treeNodes.get(id);
+
+            if(clickedNodes){
+                console.log('clicked nodes:', clickedNodes[0]?.id);
+                
+
+                clickedNodes.color = {
+                border: '#2B7CE9',
+                background: '#D2E5FF',
+                highlight: {
+                    border: '#8a2be2',
+                    background: '#8a2be2'
+                }
+                }
+            treeNodes.update(clickedNodes);
+            }
+
+
+
+            //reset old neighbour
+            if(this.currentNeighbour){
+            var neighbourNode = treeNodes.get(this.currentNeighbour.id);
+
+            neighbourNode.color = {
+                border: '#2B7CE9',
+                background: '#D2E5FF',
+                highlight: {
+                    border: '#8a2be2',
+                    background: '#8a2be2'
+                }
+                }
+                treeNodes.update(neighbourNode);
+            }
+
+
+            this.findNode(clickedNodes.id);
+
+            
+            if(this.currentNeighbour){
+                var neighbourNode = treeNodes.get(this.currentNeighbour.id);
+    
+                neighbourNode.color = {
+                    border: '#00ff00',
+                    background: '#00ff00',
+                    highlight: {
+                        border: '#8a2be2',
+                        background: '#8a2be2'
+                    }
+                    }
+                    treeNodes.update(neighbourNode);
+                }
+
+
+
+
+
+
+
+            }
+        }
+    
 }
