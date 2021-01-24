@@ -23,12 +23,20 @@ function setup() {
 }
 
 function main(polygon){
-    
+    let mesh = new Mesh()
+    mesh.initialize(polygon[0])
+    mesh.serperateToMonotone()
+    mesh.triangulate()
+    mesh.createDualGraph()
+
+    mesh.draw()
+    mesh.dual.draw()
+
 }
 
 function readPolygons(objString) {
     var points = [];
-    var polygons = new Array();
+    var polygons = [];
 
     const vertices = []
     const objSplit = objString.split(/(\r\n|\n|\r)/gm);
@@ -45,7 +53,7 @@ function readPolygons(objString) {
                 for (i = 1; i < tokens.length; i++) {
                     polygonPoints.push(points[parseInt(tokens[i]) - 1]);
                 }
-                polygons.push(new Polygon(polygonPoints));
+                polygons.push(polygonPoints);
             }
         }
     });
