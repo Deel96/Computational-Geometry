@@ -151,11 +151,11 @@ class DualGraph {
             let start = this.vertices[e.a]
             let end = this.vertices[e.b]
 
-            line(start.x, start.y, end.x, end.y)
+            line(start.x, - start.y + 500 , end.x, -end.y + 500)
         })
 
         this.vertices.forEach( v => {
-            circle(v.x, v.y, 5)
+            circle(v.x, - v.y + 500, 5)
         })
     }
 }
@@ -183,41 +183,44 @@ class Vertex {
         
         let type = this.type === null ? determineVertexType(this) : this.type
         
+        let x = this.x 
+        let y = - this.y + 500
+
         if(type === VertexType.START){
             fill(color(0, 255, 0))
-            rect(this.x-5, this.y-5, 10, 10)
+            rect(x-5, y-5, 10, 10)
         } else if (type === VertexType.END) {
             fill(color(255, 0, 0))
-            rect(this.x-5, this.y-5, 10, 10)
+            rect(x-5, y-5, 10, 10)
         } else if (type ===  VertexType.SPLIT){
             fill(color(255, 0, 255))
             angleMode(DEGREES)
-            var ax = this.x + 5 * sin(240)
-            var ay = this.y - 5 * cos(240)
+            var ax = x + 5 * sin(240)
+            var ay = y - 5 * cos(240)
 
-            var bx = this.x + 5 * sin(120)
-            var by = this.y - 5 * cos(120)
+            var bx = x + 5 * sin(120)
+            var by = y - 5 * cos(120)
 
-            var cx = this.x
-            var cy = this.y - 5
+            var cx = x
+            var cy = y - 5
 
             triangle(ax, ay, bx, by, cx, cy)
         } else if (type === VertexType.MERGE){
             fill(color(0, 0, 255))
             angleMode(DEGREES)
-            var ax = this.x + 5 * sin(240)
-            var ay = this.y + 5 * cos(240)
+            var ax = x + 5 * sin(240)
+            var ay = y + 5 * cos(240)
 
-            var bx = this.x + 5 * sin(120)
-            var by = this.y + 5 * cos(120)
+            var bx = x + 5 * sin(120)
+            var by = y + 5 * cos(120)
 
-            var cx = this.x
-            var cy = this.y + 5
+            var cx = x
+            var cy = y + 5
 
             triangle(ax, ay, bx, by, cx, cy)
         } else if (type == VertexType.REGULAR){
             fill(color(255, 255, 0))
-            circle(this.x, this.y, 10)
+            circle(x, y, 10)
         }
     }
 }
@@ -243,7 +246,7 @@ class Edge {
         stroke(this.color === null ? color(0,0,0) : this.color)
         strokeWeight(2)
 
-        line(this.halfedge.origin.x, this.halfedge.origin.y, this.halfedge.next.origin.x, this.halfedge.next.origin.y)
+        line(this.halfedge.origin.x, - this.halfedge.origin.y + 500 , this.halfedge.next.origin.x, - this.halfedge.next.origin.y + 500)
     }
 }
 
@@ -305,11 +308,11 @@ class Mesh {
         }
     }
 
-    addDiagonal(start, end) {
+    addDiagonal(start, end, c) {
         let startEndHalfedge = new HalfEdge()
         let endStartHalfedge = new HalfEdge()
         let edge = new Edge(startEndHalfedge)
-        edge.color = color(0, 255, 0)
+        edge.color = c
 
         startEndHalfedge.edge = edge
         startEndHalfedge.origin = start
@@ -454,7 +457,7 @@ class Mesh {
                         var elem = stack.pop()
 
                         if (stack.length > 0) {
-                            this.addDiagonal(next.vertex, elem.vertex)
+                            this.addDiagonal(next.vertex, elem.vertex, color(0, 0, 255))
                         }
                     }
                     stack.push(prio[i - 1])
@@ -472,7 +475,7 @@ class Mesh {
                         )
 
                         if (convex) {
-                            this.addDiagonal(next.vertex, elem.vertex)
+                            this.addDiagonal(next.vertex, elem.vertex, color(0, 0, 255))
                             lastPopped = elem
                         } else {
                             stack.push(elem)
@@ -490,7 +493,7 @@ class Mesh {
             for (let i = 0; i < stackLength; i++) {
                 var elem = stack.pop()
                 if (i !== 0 && i !== stackLength - 1) {
-                    this.addDiagonal(bottom.vertex, elem.vertex)
+                    this.addDiagonal(bottom.vertex, elem.vertex, color(0, 0, 255))
                 }
             }
         })
@@ -515,27 +518,27 @@ class Mesh {
             } else if (v.type === VertexType.END) {
                 let vHelper = tree.search(tree.root, e.previous).data.helper
                 if(vHelper.type === VertexType.MERGE){
-                    this.addDiagonal(v, vHelper)
+                    this.addDiagonal(v, vHelper, color(0, 255, 0))
                 }
                 tree.remove({edge: e.previous})
 
             } else if (v.type === VertexType.SPLIT) {
                 let node = tree.searchLower(tree.root, e)
-                this.addDiagonal(v, node.data.helper)
+                this.addDiagonal(v, node.data.helper, color(0, 255, 0))
                 node.data.helper = v
                 tree.insert({edge: e, helper: v})
 
             } else if (v.type === VertexType.MERGE) {
                 let vHelper = tree.search(tree.root, e.previous).data.helper
                 if(vHelper.type == VertexType.MERGE){
-                    this.addDiagonal(v, vHelper)
+                    this.addDiagonal(v, vHelper, color(0, 255, 0))
                 }
                 tree.remove({edge: e.previous})
 
                 let node =  tree.searchLower(tree.root, e)
                 vHelper = node.data.helper
                 if(vHelper.type === VertexType.MERGE){
-                    this.addDiagonal(v, vHelper)
+                    this.addDiagonal(v, vHelper, color(0, 255, 0))
                 }
                 node.data.helper = v
 
@@ -544,7 +547,7 @@ class Mesh {
                     let prev = e.previous
                     let vHelper = tree.search(tree.root, e.previous).data.helper
                     if(vHelper.type === VertexType.MERGE){
-                        this.addDiagonal(v, vHelper)
+                        this.addDiagonal(v, vHelper, color(0, 255, 0))
                     }
                     tree.remove({edge: prev})
                     tree.insert({edge: e, helper: v})
@@ -552,7 +555,7 @@ class Mesh {
                     let node = tree.searchLower(tree.root, e)
                     let vHelper = node.data.helper
                     if(vHelper.type === VertexType.MERGE) {
-                        this.addDiagonal(v, vHelper)
+                        this.addDiagonal(v, vHelper, color(0, 255, 0))
                     }
                     node.data.helper = v
                 }
